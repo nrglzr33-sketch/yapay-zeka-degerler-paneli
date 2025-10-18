@@ -1,1 +1,438 @@
-Yapay Zeka Değerler Paneli - GitHub Ready
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapay Zeka Değerler Kontrol Paneli | TÜBİTAK 2204-A</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+    <div id="app"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const Shield = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+        );
+
+        const Eye = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        );
+
+        const Heart = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        );
+
+        const Scale = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="3" x2="12" y2="21"/>
+                <path d="M8 9l-4 6h8l-4-6z"/>
+                <path d="M16 9l-4 6h8l-4-6z"/>
+            </svg>
+        );
+
+        const Users = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        );
+
+        const Brain = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+                <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+            </svg>
+        );
+
+        const Lock = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        );
+
+        const Lightbulb = (props) => (
+            <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+                <path d="M9 18h6"/>
+                <path d="M10 22h4"/>
+            </svg>
+        );
+
+        const ValuesDashboard = () => {
+            const [activeScenario, setActiveScenario] = useState(null);
+            const [userChoices, setUserChoices] = useState({});
+            const [showResults, setShowResults] = useState(false);
+
+            const values = [
+                { id: 'dürüstlük', name: 'Dürüstlük', icon: Shield, color: 'bg-blue-500', score: 0 },
+                { id: 'gizlilik', name: 'Gizlilik', icon: Lock, color: 'bg-purple-500', score: 0 },
+                { id: 'adalet', name: 'Adalet', icon: Scale, color: 'bg-green-500', score: 0 },
+                { id: 'empati', name: 'Empati', icon: Heart, color: 'bg-red-500', score: 0 },
+                { id: 'sorumluluk', name: 'Sorumluluk', icon: Eye, color: 'bg-yellow-500', score: 0 },
+                { id: 'eleştirel', name: 'Eleştirel Düşünme', icon: Brain, color: 'bg-indigo-500', score: 0 },
+                { id: 'şeffaflık', name: 'Şeffaflık', icon: Lightbulb, color: 'bg-orange-500', score: 0 },
+                { id: 'dayanışma', name: 'Dayanışma', icon: Users, color: 'bg-pink-500', score: 0 }
+            ];
+
+            const scenarios = [
+                {
+                    id: 1,
+                    title: 'Ödev Asistanı',
+                    description: 'Yapay zeka sana matematik ödevini tamamen hazırladı. Ne yaparsın?',
+                    choices: [
+                        { text: 'Olduğu gibi teslim ederim', values: { sorumluluk: -2, dürüstlük: -2 } },
+                        { text: 'Anlamaya çalışır, kendi kelimelerimle yazarım', values: { dürüstlük: 3, sorumluluk: 3, eleştirel: 2 } },
+                        { text: 'Öğretmenime yapay zeka kullandığımı söylerim', values: { dürüstlük: 3, şeffaflık: 3 } },
+                        { text: 'Sadece zor kısımları kullanırım', values: { eleştirel: 1, dürüstlük: 1 } }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: 'Deepfake Videosu',
+                    description: 'Arkadaşın hakkında komik bir deepfake video yapıldı. Paylaşılıyor.',
+                    choices: [
+                        { text: 'Ben de paylaşırım, komik', values: { empati: -3, sorumluluk: -2 } },
+                        { text: 'Arkadaşımı uyarır, videoyu rapor ederim', values: { empati: 3, sorumluluk: 3, dayanışma: 3 } },
+                        { text: 'Karışmam, benim sorunum değil', values: { sorumluluk: -2, dayanışma: -2 } },
+                        { text: 'Arkadaşıma destek olur, yapay zeka etiği hakkında paylaşım yaparım', values: { empati: 2, şeffaflık: 2, dayanışma: 2 } }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: 'Kişisel Veri Toplama',
+                    description: 'Ücretsiz bir yapay zeka uygulaması tüm fotoğraflarına erişim istiyor.',
+                    choices: [
+                        { text: 'İzin veririm, bedava sonuçta', values: { gizlilik: -2, eleştirel: -1 } },
+                        { text: 'Gizlilik politikasını okurum, gerekli mi kontrol ederim', values: { gizlilik: 3, eleştirel: 3, sorumluluk: 2 } },
+                        { text: 'Reddeder, alternatif ararım', values: { gizlilik: 2, eleştirel: 2 } },
+                        { text: 'Arkadaşlarıma da uyarı yaparım', values: { gizlilik: 2, dayanışma: 2, sorumluluk: 2 } }
+                    ]
+                },
+                {
+                    id: 4,
+                    title: 'Önyargılı Sonuç',
+                    description: 'Yapay zeka sana, belirli bir bölgeden insanlar hakkında olumsuz genelleme yaptı.',
+                    choices: [
+                        { text: 'Doğru olabilir, yapay zeka biliyor', values: { eleştirel: -3, adalet: -2 } },
+                        { text: 'Sorgulamadan başkalarına da söylerim', values: { sorumluluk: -3, eleştirel: -2, adalet: -2 } },
+                        { text: 'Bu önyargı olabilir mi diye düşünür, araştırırım', values: { eleştirel: 3, adalet: 3, sorumluluk: 2 } },
+                        { text: 'Uygulamaya geri bildirim yapar, düzeltilmesini isterim', values: { adalet: 3, sorumluluk: 3, dayanışma: 2 } }
+                    ]
+                },
+                {
+                    id: 5,
+                    title: 'Sınav Bilgisi',
+                    description: 'Yapay zeka sınav sorularını tahmin edebileceğini iddia ediyor.',
+                    choices: [
+                        { text: 'Kullanırım, avantaj elde ederim', values: { dürüstlük: -3, adalet: -3 } },
+                        { text: 'Sadece konuları tekrar etmek için kullanırım', values: { dürüstlük: 2, eleştirel: 2 } },
+                        { text: 'Kullanmam, haksız olur', values: { dürüstlük: 3, adalet: 3 } },
+                        { text: 'Öğretmenime durumu bildiririm', values: { dürüstlük: 3, sorumluluk: 3, şeffaflık: 2 } }
+                    ]
+                }
+            ];
+
+            const calculateValueScores = () => {
+                const scores = { ...Object.fromEntries(values.map(v => [v.id, 0])) };
+                
+                Object.values(userChoices).forEach(choice => {
+                    Object.entries(choice.values).forEach(([valueId, points]) => {
+                        scores[valueId] = (scores[valueId] || 0) + points;
+                    });
+                });
+
+                return values.map(v => ({
+                    ...v,
+                    score: scores[v.id],
+                    percentage: Math.max(0, Math.min(100, ((scores[v.id] + 15) / 30) * 100))
+                }));
+            };
+
+            const handleChoice = (scenarioId, choice) => {
+                setUserChoices(prev => ({
+                    ...prev,
+                    [scenarioId]: choice
+                }));
+                
+                if (activeScenario < scenarios.length - 1) {
+                    setTimeout(() => setActiveScenario(activeScenario + 1), 500);
+                } else {
+                    setTimeout(() => setShowResults(true), 500);
+                }
+            };
+
+            const resetTest = () => {
+                setUserChoices({});
+                setActiveScenario(0);
+                setShowResults(false);
+            };
+
+            const valueScores = calculateValueScores();
+
+            if (activeScenario === null && !showResults) {
+                return (
+                    <div className="min-h-screen p-8">
+                        <div className="max-w-4xl mx-auto">
+                            <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
+                                <div className="mb-8">
+                                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full mb-6">
+                                        <Shield className="w-12 h-12 text-white" />
+                                    </div>
+                                    <h1 className="text-4xl font-bold text-gray-800 mb-4">
+                                        Yapay Zeka Değerler Kontrol Paneli
+                                    </h1>
+                                    <p className="text-xl text-gray-600 mb-2">
+                                        Geleceği Anlamak: Yapay Zeka Okuryazarlığı
+                                    </p>
+                                    <p className="text-lg text-gray-500">
+                                        TÜBİTAK 2204-A Araştırma Projesi
+                                    </p>
+                                </div>
+
+                                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl p-8 mb-8">
+                                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                                        Bu panel ne işe yarar?
+                                    </h2>
+                                    <p className="text-gray-700 leading-relaxed mb-6">
+                                        Yapay zeka kullanırken karşılaşabileceğin gerçek yaşam senaryolarında nasıl kararlar 
+                                        verdiğini keşfet. Dürüstlük, gizlilik, adalet ve empati gibi değerlerin teknoloji 
+                                        kullanımındaki yerini öğren.
+                                    </p>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {values.slice(0, 8).map((value) => {
+                                            const Icon = value.icon;
+                                            return (
+                                                <div key={value.id} className="flex flex-col items-center">
+                                                    <div className={`w-12 h-12 ${value.color} rounded-full flex items-center justify-center mb-2`}>
+                                                        <Icon className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <span className="text-sm font-medium text-gray-700">{value.name}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => setActiveScenario(0)}
+                                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-12 py-4 rounded-full text-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                                >
+                                    Teste Başla
+                                </button>
+                                <p className="text-sm text-gray-500 mt-4">
+                                    {scenarios.length} senaryo • 5-7 dakika
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            if (showResults) {
+                const topValues = valueScores.sort((a, b) => b.score - a.score).slice(0, 3);
+                const needsWork = valueScores.filter(v => v.score < 0).slice(0, 2);
+
+                return (
+                    <div className="min-h-screen p-8">
+                        <div className="max-w-6xl mx-auto">
+                            <div className="bg-white rounded-3xl shadow-2xl p-12">
+                                <div className="text-center mb-12">
+                                    <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full mb-6">
+                                        <Shield className="w-12 h-12 text-white" />
+                                    </div>
+                                    <h1 className="text-4xl font-bold text-gray-800 mb-4">
+                                        Değerler Profilin
+                                    </h1>
+                                    <p className="text-xl text-gray-600">
+                                        İşte yapay zeka kullanımında önceliklendirdiğin değerler
+                                    </p>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-8 mb-12">
+                                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-8">
+                                        <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                            <span className="text-3xl mr-3">🌟</span>
+                                            Güçlü Yönlerin
+                                        </h3>
+                                        <div className="space-y-4">
+                                            {topValues.map((value, index) => {
+                                                const Icon = value.icon;
+                                                return (
+                                                    <div key={value.id} className="flex items-center gap-4">
+                                                        <div className="flex items-center justify-center w-10 h-10 bg-white rounded-full font-bold text-gray-700">
+                                                            {index + 1}
+                                                        </div>
+                                                        <div className={`w-12 h-12 ${value.color} rounded-full flex items-center justify-center`}>
+                                                            <Icon className="w-6 h-6 text-white" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">{value.name}</div>
+                                                            <div className="text-sm text-gray-600">Puan: {value.score}</div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+
+                                    {needsWork.length > 0 && (
+                                        <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-8">
+                                            <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                                <span className="text-3xl mr-3">💡</span>
+                                                Gelişim Alanların
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {needsWork.map((value) => {
+                                                    const Icon = value.icon;
+                                                    return (
+                                                        <div key={value.id} className="flex items-center gap-4">
+                                                            <div className={`w-12 h-12 ${value.color} rounded-full flex items-center justify-center`}>
+                                                                <Icon className="w-6 h-6 text-white" />
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="font-semibold text-gray-800">{value.name}</div>
+                                                                <div className="text-sm text-gray-600">Bu alana daha fazla dikkat et</div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            <p className="text-sm text-gray-600 mt-6 leading-relaxed">
+                                                Yapay zeka kullanırken bu değerleri de göz önünde bulundurmaya çalış. 
+                                                Her karar sadece sana değil, çevrene de etki eder.
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="bg-gray-50 rounded-2xl p-8 mb-8">
+                                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Tüm Değerler</h3>
+                                    <div className="space-y-4">
+                                        {valueScores.map((value) => {
+                                            const Icon = value.icon;
+                                            return (
+                                                <div key={value.id} className="flex items-center gap-4">
+                                                    <div className={`w-10 h-10 ${value.color} rounded-full flex items-center justify-center flex-shrink-0`}>
+                                                        <Icon className="w-5 h-5 text-white" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between mb-2">
+                                                            <span className="font-medium text-gray-700">{value.name}</span>
+                                                            <span className="text-sm text-gray-600">{Math.round(value.percentage)}%</span>
+                                                        </div>
+                                                        <div className="w-full bg-gray-200 rounded-full h-3">
+                                                            <div
+                                                                className={`h-3 rounded-full ${value.color} transition-all duration-1000`}
+                                                                style={{ width: `${value.percentage}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col items-center gap-4">
+                                    <button
+                                        onClick={resetTest}
+                                        className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-200"
+                                    >
+                                        Tekrar Dene
+                                    </button>
+                                    <p className="text-sm text-gray-500 text-center">
+                                        Sonuçlarını ekran görüntüsü alarak kaydedebilirsin
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const currentScenario = scenarios[activeScenario];
+            const progress = ((activeScenario + 1) / scenarios.length) * 100;
+
+            return (
+                <div className="min-h-screen p-8">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="mb-6">
+                            <div className="flex justify-between text-sm text-gray-600 mb-2">
+                                <span>İlerleme</span>
+                                <span>{activeScenario + 1} / {scenarios.length}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                    className="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-3xl shadow-2xl p-12">
+                            <div className="mb-8">
+                                <div className="inline-block bg-gradient-to-r from-indigo-100 to-purple-100 px-4 py-2 rounded-full text-indigo-700 font-semibold mb-4">
+                                    Senaryo {activeScenario + 1}
+                                </div>
+                                <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                                    {currentScenario.title}
+                                </h2>
+                                <p className="text-xl text-gray-600 leading-relaxed">
+                                    {currentScenario.description}
+                                </p>
+                            </div>
+
+                            <div className="space-y-4">
+                                {currentScenario.choices.map((choice, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleChoice(currentScenario.id, choice)}
+                                        className="w-full text-left p-6 rounded-2xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all duration-200 group"
+                                    >
+                                        <div className="flex items-start gap-4">
+                                            <div className="flex-shrink-0 w-8 h-8 bg-gray-100 group-hover:bg-indigo-200 rounded-full flex items-center justify-center font-semibold text-gray-600 group-hover:text-indigo-700 transition-colors">
+                                                {String.fromCharCode(65 + index)}
+                                            </div>
+                                            <p className="text-lg text-gray-700 group-hover:text-gray-900 flex-1">
+                                                {choice.text}
+                                            </p>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="mt-8 text-center text-sm text-gray-500">
+                                Bir seçenek seç ve devam et
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<ValuesDashboard />, document.getElementById('app'));
+    </script>
+</body>
+</html>
